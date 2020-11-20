@@ -5,7 +5,13 @@ import * as arrays from './arrays';
 import Dictionary from './Dictionary';
 
 export default class Set<T> {
-    private dictionary: Dictionary<T, any>;
+
+    /**
+     * Dictionary key and value holds the elements in the set.
+     * @type {Object}
+     * @protected
+     */
+    protected dictionary: Dictionary<T, any>;
 
     /**
      * Creates an empty set.
@@ -56,7 +62,7 @@ export default class Set<T> {
     }
 
     /**
-     * Performs an intersecion between this and another set.
+     * Performs an intersection between this and another set.
      * Removes all values that are not present this set and the given set.
      * @param {collections.Set} otherSet other set.
      */

@@ -4,47 +4,47 @@ import * as arrays from './arrays';
 // A linked list node
 export interface ILinkedListNode<T> {
     element: T;
-    next: ILinkedListNode<T>;
+    next: ILinkedListNode<T> | null;
 }
 
 export default class LinkedList<T> {
 
     /**
-    * First node in the list
-    * @type {Object}
-    * @private
-    */
-    public firstNode: ILinkedListNode<T> = null;
+     * First node in the list
+     * @type {Object}
+     * @private
+     */
+    public firstNode: ILinkedListNode<T> | null = null;
     /**
-    * Last node in the list
-    * @type {Object}
-    * @private
-    */
-    private lastNode: ILinkedListNode<T> = null;
+     * Last node in the list
+     * @type {Object}
+     * @private
+     */
+    private lastNode: ILinkedListNode<T> | null = null;
 
     /**
-    * Number of elements in the list
-    * @type {number}
-    * @private
-    */
-    private nElements = 0;
+     * Number of elements in the list
+     * @type {number}
+     * @private
+     */
+    private nElements: number = 0;
 
     /**
-    * Creates an empty Linked List.
-    * @class A linked list is a data structure consisting of a group of nodes
-    * which together represent a sequence.
-    * @constructor
-    */
+     * Creates an empty Linked List.
+     * @class A linked list is a data structure consisting of a group of nodes
+     * which together represent a sequence.
+     * @constructor
+     */
     constructor() { }
 
     /**
-    * Adds an element to this list.
-    * @param {Object} item element to be added.
-    * @param {number=} index optional index to add the element. If no index is specified
-    * the element is added to the end of this list.
-    * @return {boolean} true if the element was added or false if the index is invalid
-    * or if the element is undefined.
-    */
+     * Adds an element to this list.
+     * @param {Object} item element to be added.
+     * @param {number=} index optional index to add the element. If no index is specified
+     * the element is added to the end of this list.
+     * @return {boolean} true if the element was added or false if the index is invalid
+     * or if the element is undefined.
+     */
     add(item: T, index?: number): boolean {
         if (util.isUndefined(index)) {
             index = this.nElements;
@@ -53,7 +53,7 @@ export default class LinkedList<T> {
             return false;
         }
         const newNode = this.createNode(item);
-        if (this.nElements === 0) {
+        if (this.nElements === 0 || this.lastNode === null) {
             // First node in the list.
             this.firstNode = newNode;
             this.lastNode = newNode;
@@ -67,6 +67,9 @@ export default class LinkedList<T> {
             this.firstNode = newNode;
         } else {
             const prev = this.nodeAtIndex(index - 1);
+            if (prev === null) {
+                return false;
+            }
             newNode.next = prev.next;
             prev.next = newNode;
         }
@@ -75,11 +78,11 @@ export default class LinkedList<T> {
     }
 
     /**
-    * Returns the first element in this list.
-    * @return {*} the first element of the list or undefined if the list is
-    * empty.
-    */
-    first(): T {
+     * Returns the first element in this list.
+     * @return {*} the first element of the list or undefined if the list is
+     * empty.
+     */
+    first(): T | undefined {
 
         if (this.firstNode !== null) {
             return this.firstNode.element;
@@ -88,11 +91,11 @@ export default class LinkedList<T> {
     }
 
     /**
-    * Returns the last element in this list.
-    * @return {*} the last element in the list or undefined if the list is
-    * empty.
-    */
-    last(): T {
+     * Returns the last element in this list.
+     * @return {*} the last element in the list or undefined if the list is
+     * empty.
+     */
+    last(): T | undefined {
 
         if (this.lastNode !== null) {
             return this.lastNode.element;
@@ -106,7 +109,7 @@ export default class LinkedList<T> {
      * @return {*} the element at the given index or undefined if the index is
      * out of bounds.
      */
-    elementAtIndex(index: number): T {
+    elementAtIndex(index: number): T | undefined {
 
         const node = this.nodeAtIndex(index);
         if (node === null) {
@@ -155,23 +158,23 @@ export default class LinkedList<T> {
 
 
     /**
-       * Returns true if this list contains the specified element.
-       * <p>If the elements inside the list are
-       * not comparable with the === operator a custom equals function should be
-       * provided to perform searches, the function must receive two arguments and
-       * return true if they are equal, false otherwise. Example:</p>
-       *
-       * <pre>
-       * const petsAreEqualByName = function(pet1, pet2) {
-       *  return pet1.name === pet2.name;
-       * }
-       * </pre>
-       * @param {Object} item element to search for.
-       * @param {function(Object,Object):boolean=} equalsFunction Optional
-       * function used to check if two elements are equal.
-       * @return {boolean} true if this list contains the specified element, false
-       * otherwise.
-       */
+     * Returns true if this list contains the specified element.
+     * <p>If the elements inside the list are
+     * not comparable with the === operator a custom equals function should be
+     * provided to perform searches, the function must receive two arguments and
+     * return true if they are equal, false otherwise. Example:</p>
+     *
+     * <pre>
+     * const petsAreEqualByName = function(pet1, pet2) {
+     *  return pet1.name === pet2.name;
+     * }
+     * </pre>
+     * @param {Object} item element to search for.
+     * @param {function(Object,Object):boolean=} equalsFunction Optional
+     * function used to check if two elements are equal.
+     * @return {boolean} true if this list contains the specified element, false
+     * otherwise.
+     */
     contains(item: T, equalsFunction?: util.IEqualsFunction<T>): boolean {
         return (this.indexOf(item, equalsFunction) >= 0);
     }
@@ -196,14 +199,14 @@ export default class LinkedList<T> {
         if (this.nElements < 1 || util.isUndefined(item)) {
             return false;
         }
-        let previous: ILinkedListNode<T> = null;
-        let currentNode: ILinkedListNode<T> = this.firstNode;
+        let previous: ILinkedListNode<T> | null = null;
+        let currentNode: ILinkedListNode<T> | null = this.firstNode;
 
         while (currentNode !== null) {
             if (equalsF(currentNode.element, item)) {
 
-                if (currentNode === this.firstNode) {
-                    this.firstNode = this.firstNode.next;
+                if (previous === null) { // currentNode is the first node
+                    this.firstNode = currentNode.next;
                     if (currentNode === this.lastNode) {
                         this.lastNode = null;
                     }
@@ -243,7 +246,7 @@ export default class LinkedList<T> {
      * the === operator is used to check equality between elements.
      * @return {boolean} true if this list is equal to the given list.
      */
-    equals(other: LinkedList<T>, equalsFunction?: util.IEqualsFunction<T>): boolean {
+    equals(other: any, equalsFunction?: util.IEqualsFunction<T>): boolean {
         const eqF = equalsFunction || util.defaultEquals;
         if (!(other instanceof LinkedList)) {
             return false;
@@ -255,10 +258,10 @@ export default class LinkedList<T> {
     }
 
     /**
-    * @private
-    */
-    private equalsAux(n1: ILinkedListNode<T>, n2: ILinkedListNode<T>, eqF: util.IEqualsFunction<T>): boolean {
-        while (n1 !== null) {
+     * @private
+     */
+    private equalsAux(n1: ILinkedListNode<T> | null, n2: ILinkedListNode<T> | null, eqF: util.IEqualsFunction<T>): boolean {
+        while (n1 !== null && n2 !== null) {
             if (!eqF(n1.element, n2.element)) {
                 return false;
             }
@@ -273,11 +276,11 @@ export default class LinkedList<T> {
      * @param {number} index given index.
      * @return {*} removed element or undefined if the index is out of bounds.
      */
-    removeElementAtIndex(index: number): T {
-        if (index < 0 || index >= this.nElements) {
+    removeElementAtIndex(index: number): T | undefined {
+        if (index < 0 || index >= this.nElements || this.firstNode === null || this.lastNode === null) {
             return undefined;
         }
-        let element: T;
+        let element: T | undefined;
         if (this.nElements === 1) {
             //First node in the list.
             element = this.firstNode.element;
@@ -292,7 +295,7 @@ export default class LinkedList<T> {
                 element = this.lastNode.element;
                 this.lastNode = previous;
             }
-            if (previous !== null) {
+            if (previous !== null && previous.next !== null) {
                 element = previous.next.element;
                 previous.next = previous.next.next;
             }
@@ -322,9 +325,9 @@ export default class LinkedList<T> {
      * element first, and the first element last).
      */
     reverse(): void {
-        let previous: ILinkedListNode<T> = null;
-        let current: ILinkedListNode<T> = this.firstNode;
-        let temp: ILinkedListNode<T> = null;
+        let previous: ILinkedListNode<T> | null = null;
+        let current: ILinkedListNode<T> | null = this.firstNode;
+        let temp: ILinkedListNode<T> | null = null;
         while (current !== null) {
             temp = current.next;
             current.next = previous;
@@ -344,7 +347,7 @@ export default class LinkedList<T> {
      */
     toArray(): T[] {
         const array: T[] = [];
-        let currentNode: ILinkedListNode<T> = this.firstNode;
+        let currentNode: ILinkedListNode<T> | null = this.firstNode;
         while (currentNode !== null) {
             array.push(currentNode.element);
             currentNode = currentNode.next;
@@ -375,7 +378,7 @@ export default class LinkedList<T> {
     /**
      * @private
      */
-    private nodeAtIndex(index: number): ILinkedListNode<T> {
+    private nodeAtIndex(index: number): ILinkedListNode<T> | null {
 
         if (index < 0 || index >= this.nElements) {
             return null;
@@ -384,7 +387,7 @@ export default class LinkedList<T> {
             return this.lastNode;
         }
         let node = this.firstNode;
-        for (let i = 0; i < index; i++) {
+        for (let i = 0; i < index && node !== null; i++) {
             node = node.next;
         }
         return node;

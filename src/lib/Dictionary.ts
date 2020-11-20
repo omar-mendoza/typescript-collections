@@ -64,7 +64,7 @@ export default class Dictionary<K, V> {
      * @return {*} the value to which this dictionary maps the specified key or
      * undefined if the map contains no mapping for this key.
      */
-    getValue(key: K): V {
+    getValue(key: K): V | undefined {
         const pair: IDictionaryPair<K, V> = this.table['$' + this.toStr(key)];
         if (util.isUndefined(pair)) {
             return undefined;
@@ -83,13 +83,13 @@ export default class Dictionary<K, V> {
      * @return {*} previous value associated with the specified key, or undefined if
      * there was no mapping for the key or if the key/value are undefined.
      */
-    setValue(key: K, value: V): V {
+    setValue(key: K, value: V): V | undefined {
 
         if (util.isUndefined(key) || util.isUndefined(value)) {
             return undefined;
         }
 
-        let ret: V;
+        let ret: V | undefined;
         const k = '$' + this.toStr(key);
         const previousElement: IDictionaryPair<K, V> = this.table[k];
         if (util.isUndefined(previousElement)) {
@@ -112,7 +112,7 @@ export default class Dictionary<K, V> {
      * @return {*} previous value associated with specified key, or undefined if
      * there was no mapping for key.
      */
-    remove(key: K): V {
+    remove(key: K): V | undefined {
         const k = '$' + this.toStr(key);
         const previousElement: IDictionaryPair<K, V> = this.table[k];
         if (!util.isUndefined(previousElement)) {
@@ -154,12 +154,12 @@ export default class Dictionary<K, V> {
     }
 
     /**
-    * Executes the provided function once for each key-value pair
-    * present in this dictionary.
-    * @param {function(Object,Object):*} callback function to execute, it is
-    * invoked with two arguments: key and value. To break the iteration you can
-    * optionally return false.
-    */
+     * Executes the provided function once for each key-value pair
+     * present in this dictionary.
+     * @param {function(Object,Object):*} callback function to execute, it is
+     * invoked with two arguments: key and value. To break the iteration you can
+     * optionally return false.
+     */
     forEach(callback: (key: K, value: V) => any): void {
         for (const name in this.table) {
             if (util.has(this.table, name)) {
@@ -184,9 +184,9 @@ export default class Dictionary<K, V> {
     }
 
     /**
-    * Removes all mappings from this dictionary.
-    * @this {collections.Dictionary}
-    */
+     * Removes all mappings from this dictionary.
+     * @this {collections.Dictionary}
+     */
     clear() {
         this.table = {};
         this.nElements = 0;

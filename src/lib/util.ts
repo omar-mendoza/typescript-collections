@@ -4,25 +4,25 @@ export const has = function(obj: any, prop: any) {
 };
 
 /**
-* Function signature for comparing
-* <0 means a is smaller
-* = 0 means they are equal
-* >0 means a is larger
-*/
+ * Function signature for comparing
+ * <0 means a is smaller
+ * = 0 means they are equal
+ * >0 means a is larger
+ */
 export interface ICompareFunction<T> {
     (a: T, b: T): number;
 }
 
 /**
-* Function signature for checking equality
-*/
+ * Function signature for checking equality
+ */
 export interface IEqualsFunction<T> {
     (a: T, b: T): boolean;
 }
 
 /**
-* Function signature for Iterations. Return false to break from loop
-*/
+ * Function signature for Iterations. Return false to break from loop
+ */
 export interface ILoopFunction<T> {
     (a: T): boolean | void;
 }
@@ -66,8 +66,8 @@ export function defaultToString(item: any): string {
 }
 
 /**
-* Joins all the properies of the object using the provided join string
-*/
+ * Joins all the properies of the object using the provided join string
+ */
 export function makeString<T>(item: T, join: string = ','): string {
     if (item === null) {
         return 'COLLECTION_NULL';
@@ -104,7 +104,7 @@ export function isFunction(func: any): boolean {
  * Checks if the given argument is undefined.
  * @function
  */
-export function isUndefined(obj: any): boolean {
+export function isUndefined(obj: any): obj is undefined {
     return (typeof obj) === 'undefined';
 }
 
@@ -120,8 +120,8 @@ export function isString(obj: any): boolean {
  * Reverses a compare function.
  * @function
  */
-export function reverseCompareFunction<T>(compareFunction: ICompareFunction<T>): ICompareFunction<T> {
-    if (!isFunction(compareFunction)) {
+export function reverseCompareFunction<T>(compareFunction?: ICompareFunction<T>): ICompareFunction<T> {
+    if (isUndefined(compareFunction) || !isFunction(compareFunction)) {
         return function(a, b) {
             if (a < b) {
                 return 1;
